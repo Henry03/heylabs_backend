@@ -4,7 +4,7 @@ import { KtpData } from "../interfaces/ktp.interface";
 import OpenAI from "openai";
 import logger from "../utils/logger";
 
-export async function processKtpImage(buffer: Buffer): Promise<KtpData | any> {
+export async function register(): Promise<KtpData | any> {
     const client = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY?.trim(),
     });
@@ -35,12 +35,11 @@ export async function processKtpImage(buffer: Buffer): Promise<KtpData | any> {
         "jenis_kelamin": "LAKI-LAKI" | "PEREMPUAN",
         "golongan_darah": "A" | "B" | "O" | "AB" | "",
         "alamat": "string",
-        "rt": "XXX",
-        "rw": "XXX",
+        "rt_rw": "XXX/XXX",
         "kel_desa": "string",
         "kecamatan": "string",
-        "kabupaten_kota": "string without the word 'Kabupaten' or 'Kota'",
-        "provinsi": "string without the word 'Provinsi'",
+        "kabupaten_kota": "string",
+        "provinsi": "string",
         "tempat_dikeluarkan": "string",
         "tanggal_dikeluarkan": "DD-MM-YYYY" | "",
         "masa_berlaku": "DD-MM-YYYY" | "SEUMUR HIDUP" | "",
@@ -54,7 +53,7 @@ export async function processKtpImage(buffer: Buffer): Promise<KtpData | any> {
         - nik must be 16 digits (string).
         - tanggal fields must be DD-MM-YYYY when present.
         - If masa_berlaku is lifelong, return "SEUMUR HIDUP".
-        - rt or rw must be XXX (3 digits), if missing return "000".
+        - rt_rw must be XXX/XXX (3 digits / 3 digits), if missing return "000/000".
         - provinsi and kabupaten_kota must be the administrative names as printed on the KTP.
         - If image is not a KTP, set "is_ktp": false and set all other fields to empty (rt_rw "000/000").
         - nama can contain "."
@@ -86,31 +85,10 @@ export async function processKtpImage(buffer: Buffer): Promise<KtpData | any> {
         const parsed = JSON.parse(cleaned);
         jsonResult = normalizeKtpData(parsed);
         logger.info("KTP data successfully parsed");
-    } catch (err: any) {
+    } catch (err: any){
         logger.error(`Failed to parse JSON: ${err.message}`);
-        jsonResult = {
-        is_ktp: false,
-        nik: "",
-        nama: "",
-        tempat_lahir: "",
-        tanggal_lahir: "",
-        jenis_kelamin: "",
-        golongan_darah: "",
-        alamat: "",
-        rt_rw: "000/000",
-        kel_desa: "",
-        kecamatan: "",
-        kabupaten_kota: "",
-        provinsi: "",
-        tempat_dikeluarkan: "",
-        tanggal_dikeluarkan: "",
-        masa_berlaku: "",
-        agama: "",
-        status_perkawinan: "",
-        pekerjaan: "",
-        kewarganegaraan: "",
-    };
-  }
+        jsonResult = { raw: textResponse };
+    }
 
     return jsonResult;
 }

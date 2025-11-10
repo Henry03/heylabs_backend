@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String      @id @default(cuid())
+  email         String      @unique
+  password      String
+  username      String      @unique
+  name          String
+  balance       Int         @default(0)
+  role          Role        @default(user)
+  verifiedAt    DateTime?
+  apiUsageLogs  ApiUsageLog[]
+  apiKeys       ApiKey[]
+  otps          UserOtp[]
+  topUpsSent     TopUpLog[] @relation("SentTopUps")
+  topUpsReceived TopUpLog[] @relation("ReceivedTopUps")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model ApiKey {
+  id        String    @id @default(cuid())
+  name      String
+  prefix    String    @unique
+  key       String    
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  apiUsage  ApiUsageLog[]
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+}
+
+model ApiEndpoint {
+  id        String   @id @default(cuid())
+  name      String   @unique        
+  path      String   @unique        
+  price     Int                       
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  usageLogs ApiUsageLog[]
+}
+
+model ApiUsageLog {
+  id        String    @id @default(cuid())
+  userId    String
+  apiKeyId  String?
+  apiEndpointId  String?
+  cost      Int
+  errorCode String
+  reason    String
+  createdAt DateTime  @default(now())
+  user      User              @relation(fields: [userId], references: [id])
+  apiKey    ApiKey?            @relation(fields: [apiKeyId], references: [id])
+  apiEndpoint ApiEndpoint?     @relation(fields: [apiEndpointId], references: [id])
+}
+
+model UserOtp {
+  id        String  @id @default(cuid())
+  userId    String
+  otpCode   String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model TopUpLog {
+  id         String   @id @default(cuid())
+  senderId   String?  
+  sender     User?    @relation("SentTopUps", fields: [senderId], references: [id])
+  receiverId String   
+  receiver   User     @relation("ReceivedTopUps", fields: [receiverId], references: [id])
+  amount     Int
+  method     String   
+  status     String   
+  createdAt  DateTime @default(now())
+  processedAt DateTime?
+}
+
+
+enum Role {
+  admin
+  user
+}

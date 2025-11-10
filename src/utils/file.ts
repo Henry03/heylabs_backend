@@ -35,15 +35,6 @@ function safeDateOrEmpty(s: any): string {
 
 export function normalizeKtpData(input: any): KtpData {
   const d: any = input || {};
-  const rt_rw_raw = String(d.rt_rw || "").replace(/\s+/g, "");
-  const rt_rw = /^\d{3}\/\d{3}$/.test(rt_rw_raw)
-    ? rt_rw_raw
-    : (() => {
-        // try to auto-format like "1/2" -> "001/002"
-        const m = rt_rw_raw.match(/^(\d{1,3})\/(\d{1,3})$/);
-        if (m) return m[1].padStart(3,"0") + "/" + m[2].padStart(3,"0");
-        return "000/000";
-      })();
 
   const nik = /^\d{16}$/.test(String(d.nik || "")) ? String(d.nik) : "";
 
@@ -56,7 +47,8 @@ export function normalizeKtpData(input: any): KtpData {
     jenis_kelamin: VALID_JK.includes(String(d.jenis_kelamin || "").toUpperCase()) ? String(d.jenis_kelamin).toUpperCase() : "",
     golongan_darah: VALID_GOLONGAN.includes(String(d.golongan_darah || "").toUpperCase()) ? String(d.golongan_darah).toUpperCase() : "",
     alamat: String(d.alamat || "").trim(),
-    rt_rw,
+    rt: String(d.rt || "000").trim(),
+    rw: String(d.rw || "000").trim(),
     kel_desa: String(d.kel_desa || "").trim(),
     kecamatan: String(d.kecamatan || "").trim(),
     kabupaten_kota: String(d.kabupaten_kota || "").trim(),

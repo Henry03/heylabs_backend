@@ -2,6 +2,7 @@ import { Router } from 'express';
 import * as ktpController from '../controllers/ktp.controller';
 import multer from 'multer';
 import { errorResponse } from '../utils/response';
+import { apiKeyAuth, universalAuth } from '../middlewares/auth.middleware';
 
 const router = Router();
 const storage = multer.memoryStorage();
@@ -25,6 +26,6 @@ const uploadSingle = (field: string) => (req: any, res: any, next: any) => {
 };
 
 
-router.post('/ocr', uploadSingle("image"), ktpController.ocrKtp);
+router.post('/ocr', uploadSingle("image"), universalAuth(), ktpController.ocrKtp);
 
 export default router;

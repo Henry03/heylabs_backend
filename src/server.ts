@@ -2,11 +2,33 @@ import express from "express";
 import bodyParser from "body-parser";
 import router from './routes';
 import dotenv from "dotenv";
+import cors from "cors";
 
 dotenv.config();
 
-console.log(process.env.GEMINI_API_KEY)
 const app = express();
+
+const allowedOrigins = [
+  "http://localhost:4002",
+  "https://heylabs.id",
+  "http://heylabs.id"
+];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
 app.use(bodyParser.json());
 
 app.use('/v1', router)

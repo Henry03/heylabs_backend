@@ -6,8 +6,9 @@ export interface KtpData {
   tanggal_lahir: string;
   jenis_kelamin: string;
   golongan_darah: string;
+  rt: string;
+  rw: string;
   alamat: string;
-  rt_rw: string;
   kel_desa: string;
   kecamatan: string;
   kabupaten_kota: string;
