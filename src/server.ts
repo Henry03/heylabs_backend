@@ -31,7 +31,7 @@ app.use(
 
 app.use(bodyParser.json());
 
-app.use('/v1', router)
+app.use('/api/v1', router)
 
 const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => {
