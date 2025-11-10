@@ -29,7 +29,7 @@ export const register = async (req: Request, res: Response) => {
           errors.username = ["Username already taken"];
         }
 
-        return response(res, false, 400, "The given data was invalid", errors)
+        return errorResponse(res, 400, "The given data was invalid", errors)
       }
 
       const hash = await bcrypt.hash(password, 10);

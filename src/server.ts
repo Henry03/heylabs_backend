@@ -9,7 +9,7 @@ dotenv.config();
 const app = express();
 
 const allowedOrigins = [
-  "http://localhost:4002",
+  "http://localhost:4003",
   "https://heylabs.id",
   "http://heylabs.id"
 ];
