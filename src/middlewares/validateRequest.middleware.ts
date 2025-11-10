@@ -9,10 +9,12 @@ export const validateRequest = (req: Request, res: Response, next: NextFunction)
     const formattedErrors: Record<string, string[]> = {};
 
     errors.array().forEach((error) => {
-      if (!formattedErrors[error.path]) {
-        formattedErrors[error.path] = [];
+      const field = (error as any).path || (error as any).param || 'unknown';
+
+      if (!formattedErrors[field]) {
+        formattedErrors[field] = [];
       }
-      formattedErrors[error.path].push(error.msg);
+      formattedErrors[field].push(error.msg);
     });
 
     return errorResponse(res, 422, 'The given data was invalid', formattedErrors);
