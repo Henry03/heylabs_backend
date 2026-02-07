@@ -8,14 +8,14 @@ const router = Router();
 const storage = multer.memoryStorage();
 const upload = multer({ 
   storage,
-  limits: { fileSize: 1 * 1024 * 1024 },
+  limits: { fileSize: 10 * 1024 * 1024 },
 });
 
 const uploadSingle = (field: string) => (req: any, res: any, next: any) => {
   upload.single(field)(req, res, (err) => {
     if (err instanceof multer.MulterError) {
       if (err.code === "LIMIT_FILE_SIZE") {
-        return errorResponse(res, 400, "File size exceeds 1MB");
+        return errorResponse(res, 400, "File size exceeds 10MB");
       }
       return errorResponse(res, 400, "Upload failed");
     } else if (err) {
