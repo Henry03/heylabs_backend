@@ -4,6 +4,7 @@ import { errorResponse, response } from "../utils/response";
 import logger from "../utils/logger";
 import { cleanJsonResponse } from "../utils/file";
 import { ReceiptResult } from "../interfaces/receipt.interface";
+import { compressImage } from "../utils/image";
 
 export const scan = async (req: Request, res: Response) => {
   try {
@@ -13,6 +14,12 @@ export const scan = async (req: Request, res: Response) => {
     }
 
     const file = req.file;
+
+    const compressedBuffer = await compressImage(
+      file.buffer,
+      file.mimetype,
+      300*1024 // 300KB
+    );
 
     const prompt = `Kamu adalah sistem OCR dan data extraction profesional untuk struk belanja.
 
@@ -101,7 +108,7 @@ export const scan = async (req: Request, res: Response) => {
     `
 
     const result = await scanWithGemini({
-      buffer: file.buffer, 
+      buffer: compressedBuffer, 
       prompt, 
       mimeType: file.mimetype});
       
