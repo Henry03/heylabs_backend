@@ -1078,3 +1078,147 @@ Please make sure your database server is running at `103.23.198.184:6000`.
 [2025-11-09T16:41:28.079Z] INFO: KTP data successfully parsed
 [2025-11-09T16:41:28.080Z] INFO: KTP processed successfully
 [2025-11-09T16:41:28.170Z] INFO: ✅ Deducted 2000 saldo for user henryyg03@gmail.com
+[2026-02-01T16:12:24.575Z] INFO: Starting Scan Image With Gemini...
+[2026-02-01T16:12:37.600Z] INFO: Receipt scanned successfully
+[2026-02-01T16:12:37.733Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-01T16:13:46.355Z] INFO: Starting Scan Image With Gemini...
+[2026-02-01T16:14:04.192Z] INFO: Receipt scanned successfully
+[2026-02-01T16:14:04.338Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-01T16:14:28.648Z] INFO: Starting Scan Image With Gemini...
+[2026-02-01T16:14:44.985Z] INFO: Receipt scanned successfully
+[2026-02-01T16:14:45.137Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-01T16:16:34.692Z] INFO: Starting Scan Image With Gemini...
+[2026-02-01T16:17:06.532Z] INFO: Receipt scanned successfully
+[2026-02-01T16:17:06.672Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-01T16:17:16.392Z] INFO: Starting Scan Image With Gemini...
+[2026-02-01T16:17:22.760Z] INFO: Receipt scanned successfully
+[2026-02-01T16:17:22.836Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-01T16:18:05.994Z] INFO: Starting Scan Image With Gemini...
+[2026-02-01T16:18:11.429Z] INFO: Receipt scanned successfully
+[2026-02-01T16:18:11.510Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-01T16:20:40.612Z] INFO: Starting Scan Image With Gemini...
+[2026-02-01T16:20:44.856Z] INFO: Receipt scanned successfully
+[2026-02-01T16:20:44.965Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-01T16:28:41.193Z] INFO: Starting Scan Image With Gemini...
+[2026-02-01T16:28:48.236Z] INFO: Receipt data successfully parsed
+[2026-02-01T16:28:48.237Z] INFO: Receipt scanned successfully
+[2026-02-01T16:28:48.397Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-01T16:29:57.432Z] INFO: Starting Scan Image With Gemini...
+[2026-02-01T16:30:22.060Z] INFO: Receipt data successfully parsed
+[2026-02-01T16:30:22.061Z] INFO: Receipt scanned successfully
+[2026-02-01T16:30:22.208Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-01T16:31:27.743Z] INFO: Starting Scan Image With Gemini...
+[2026-02-01T16:31:33.578Z] INFO: Receipt data successfully parsed
+[2026-02-01T16:31:33.579Z] INFO: Receipt scanned successfully
+[2026-02-01T16:31:33.579Z] INFO: Uploaded image is not a valid Receipt
+[2026-02-01T16:31:33.580Z] INFO: ⚠️ /api/v1/receipt/scan ended with 400, no deduction
+[2026-02-01T16:31:41.225Z] INFO: Starting Scan Image With Gemini...
+[2026-02-01T16:32:00.519Z] INFO: Receipt data successfully parsed
+[2026-02-01T16:32:00.519Z] INFO: Receipt scanned successfully
+[2026-02-01T16:32:00.637Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-07T17:21:18.400Z] ERROR: Login failed: 
+Invalid `prisma.user.findUnique()` invocation in
+D:\Project\heyalabs_backend\src\controllers\auth.controller.ts:119:36
+
+  116 try{
+  117   const {email, password} = req.body;
+  118 
+→ 119   const user = await prisma.user.findUnique(
+Timed out fetching a new connection from the connection pool. More info: http://pris.ly/d/connection-pool (Current connection pool timeout: 5, connection limit: 10)
+[2026-02-07T17:21:42.654Z] ERROR: Login failed: 
+Invalid `prisma.user.findUnique()` invocation in
+D:\Project\heyalabs_backend\src\controllers\auth.controller.ts:119:36
+
+  116 try{
+  117   const {email, password} = req.body;
+  118 
+→ 119   const user = await prisma.user.findUnique(
+Can't reach database server at `103.23.198.184:6000`
+
+Please make sure your database server is running at `103.23.198.184:6000`.
+[2026-02-07T17:33:08.300Z] INFO: Starting Scan Image With Gemini...
+[2026-02-07T17:33:32.719Z] INFO: Receipt data successfully parsed
+[2026-02-07T17:33:32.720Z] INFO: Receipt scanned successfully
+[2026-02-07T17:33:32.935Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-07T17:40:07.594Z] INFO: Starting KTP image processing...
+[2026-02-07T17:40:14.650Z] INFO: KTP data successfully parsed
+[2026-02-07T17:40:14.650Z] INFO: KTP processed successfully
+[2026-02-07T17:40:14.765Z] INFO: ✅ Deducted 2000 saldo for user henryyg03@gmail.com
+[2026-02-07T17:41:15.795Z] INFO: Starting Scan Image With Gemini...
+[2026-02-07T17:41:50.305Z] INFO: Receipt data successfully parsed
+[2026-02-07T17:41:50.305Z] INFO: Receipt scanned successfully
+[2026-02-07T17:41:50.404Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-07T17:45:29.640Z] INFO: Starting Scan Image With Gemini...
+[2026-02-07T17:45:56.068Z] INFO: Receipt data successfully parsed
+[2026-02-07T17:45:56.068Z] INFO: Receipt scanned successfully
+[2026-02-07T17:45:56.422Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-07T17:54:18.881Z] INFO: Starting Scan Image With Gemini...
+[2026-02-07T17:55:07.643Z] INFO: Receipt data successfully parsed
+[2026-02-07T17:55:07.643Z] INFO: Receipt scanned successfully
+[2026-02-07T17:55:07.799Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-07T18:05:52.903Z] INFO: Starting Scan Image With Gemini...
+[2026-02-07T18:06:24.106Z] INFO: Receipt data successfully parsed
+[2026-02-07T18:06:24.106Z] INFO: Receipt scanned successfully
+[2026-02-07T18:06:24.324Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-07T18:12:32.401Z] INFO: Starting Scan Image With Gemini...
+[2026-02-07T18:12:56.246Z] INFO: Receipt data successfully parsed
+[2026-02-07T18:12:56.246Z] INFO: Receipt scanned successfully
+[2026-02-07T18:12:56.341Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-07T18:25:20.457Z] INFO: Starting Scan Image With Gemini...
+[2026-02-07T18:25:39.998Z] INFO: Receipt data successfully parsed
+[2026-02-07T18:25:39.998Z] INFO: Receipt scanned successfully
+[2026-02-07T18:25:40.409Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-07T18:37:00.590Z] INFO: Starting Scan Image With Gemini...
+[2026-02-07T18:37:13.757Z] ERROR: Scan receipt failed: {"error":{"code":503,"message":"The model is overloaded. Please try again later.","status":"UNAVAILABLE"}}
+[2026-02-07T18:37:13.759Z] INFO: ⚠️ /api/v1/receipt/scan ended with 500, no deduction
+[2026-02-07T18:37:28.695Z] INFO: Starting Scan Image With Gemini...
+[2026-02-07T18:37:53.179Z] INFO: Receipt data successfully parsed
+[2026-02-07T18:37:53.179Z] INFO: Receipt scanned successfully
+[2026-02-07T18:37:53.378Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-07T18:58:20.428Z] INFO: Starting Scan Image With Gemini...
+[2026-02-07T18:58:37.665Z] INFO: Receipt data successfully parsed
+[2026-02-07T18:58:37.665Z] INFO: Receipt scanned successfully
+[2026-02-07T18:58:37.761Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-07T19:21:49.070Z] INFO: Starting Scan Image With Gemini...
+[2026-02-07T19:22:21.357Z] INFO: Receipt data successfully parsed
+[2026-02-07T19:22:21.358Z] INFO: Receipt scanned successfully
+[2026-02-07T19:22:21.513Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-07T19:26:33.299Z] INFO: Starting Scan Image With Gemini...
+[2026-02-07T19:27:05.962Z] INFO: Receipt data successfully parsed
+[2026-02-07T19:27:05.962Z] INFO: Receipt scanned successfully
+[2026-02-07T19:27:06.075Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-07T19:30:00.280Z] INFO: Starting Scan Image With Gemini...
+[2026-02-07T19:30:18.618Z] INFO: Receipt data successfully parsed
+[2026-02-07T19:30:18.619Z] INFO: Receipt scanned successfully
+[2026-02-07T19:30:19.659Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-07T19:50:07.291Z] INFO: Starting Scan Image With Gemini...
+[2026-02-07T19:50:08.921Z] ERROR: Scan receipt failed: {"error":{"code":503,"message":"The model is overloaded. Please try again later.","status":"UNAVAILABLE"}}
+[2026-02-07T19:50:08.922Z] INFO: ⚠️ /api/v1/receipt/scan ended with 500, no deduction
+[2026-02-07T19:50:30.044Z] INFO: Starting Scan Image With Gemini...
+[2026-02-07T19:50:48.169Z] INFO: Receipt data successfully parsed
+[2026-02-07T19:50:48.169Z] INFO: Receipt scanned successfully
+[2026-02-07T19:50:48.342Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-07T19:57:02.048Z] INFO: Starting Scan Image With Gemini...
+[2026-02-07T19:57:18.341Z] INFO: Receipt data successfully parsed
+[2026-02-07T19:57:18.341Z] INFO: Receipt scanned successfully
+[2026-02-07T19:57:18.441Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-07T19:57:30.509Z] INFO: Starting Scan Image With Gemini...
+[2026-02-07T19:58:08.003Z] INFO: Receipt data successfully parsed
+[2026-02-07T19:58:08.003Z] INFO: Receipt scanned successfully
+[2026-02-07T19:58:08.235Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-07T20:12:43.422Z] INFO: Starting Scan Image With Gemini...
+[2026-02-07T20:13:00.528Z] INFO: Receipt data successfully parsed
+[2026-02-07T20:13:00.528Z] INFO: Receipt scanned successfully
+[2026-02-07T20:13:00.649Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-07T20:51:48.313Z] INFO: Starting Scan Image With Gemini...
+[2026-02-07T20:52:05.175Z] INFO: Receipt data successfully parsed
+[2026-02-07T20:52:05.176Z] INFO: Receipt scanned successfully
+[2026-02-07T20:52:05.258Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-07T20:55:43.664Z] INFO: Starting Scan Image With Gemini...
+[2026-02-07T20:56:17.370Z] INFO: Receipt data successfully parsed
+[2026-02-07T20:56:17.370Z] INFO: Receipt scanned successfully
+[2026-02-07T20:56:17.988Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com
+[2026-02-07T21:10:04.685Z] INFO: Starting Scan Image With Gemini...
+[2026-02-07T21:10:28.199Z] INFO: Receipt data successfully parsed
+[2026-02-07T21:10:28.199Z] INFO: Receipt scanned successfully
+[2026-02-07T21:10:28.756Z] INFO: ✅ Deducted 0 saldo for user henryyg03@gmail.com

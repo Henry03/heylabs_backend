@@ -927,3 +927,25 @@ D:\Project\OCR\src\controllers\endpoint.controller.ts:132:47
 Can't reach database server at `103.23.198.184:6000`
 
 Please make sure your database server is running at `103.23.198.184:6000`.
+[2026-02-07T17:21:18.400Z] ERROR: Login failed: 
+Invalid `prisma.user.findUnique()` invocation in
+D:\Project\heyalabs_backend\src\controllers\auth.controller.ts:119:36
+
+  116 try{
+  117   const {email, password} = req.body;
+  118 
+→ 119   const user = await prisma.user.findUnique(
+Timed out fetching a new connection from the connection pool. More info: http://pris.ly/d/connection-pool (Current connection pool timeout: 5, connection limit: 10)
+[2026-02-07T17:21:42.654Z] ERROR: Login failed: 
+Invalid `prisma.user.findUnique()` invocation in
+D:\Project\heyalabs_backend\src\controllers\auth.controller.ts:119:36
+
+  116 try{
+  117   const {email, password} = req.body;
+  118 
+→ 119   const user = await prisma.user.findUnique(
+Can't reach database server at `103.23.198.184:6000`
+
+Please make sure your database server is running at `103.23.198.184:6000`.
+[2026-02-07T18:37:13.757Z] ERROR: Scan receipt failed: {"error":{"code":503,"message":"The model is overloaded. Please try again later.","status":"UNAVAILABLE"}}
+[2026-02-07T19:50:08.921Z] ERROR: Scan receipt failed: {"error":{"code":503,"message":"The model is overloaded. Please try again later.","status":"UNAVAILABLE"}}
