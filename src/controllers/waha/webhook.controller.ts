@@ -208,7 +208,7 @@ export const wahaWebhook =
         });
 
         text +=
-        `Ketik:\n#TRACK [ID ORDER]\nuntuk cek detail.`;
+        `Ketik:\n#DETAIL [ID ORDER]\nuntuk cek detail.`;
 
         await sendWhatsappMessage(
           from,
@@ -250,14 +250,16 @@ export const wahaWebhook =
           const orderId =
             Number(command.orderId);
 
+          const courier = command.courier;
+
           const trackingNumber =
             command.trackingNumber;
 
-          if (!orderId || !trackingNumber) {
+          if (!orderId || !trackingNumber || !courier) {
 
             await sendWhatsappMessage(
               from,
-              "❌ Format salah.\nGunakan:\n#ADDRESI [ID] [NORESI]"
+              "❌ Format salah.\nGunakan:\n#ADDRESI [ID] [COURIER] [NORESI]"
             );
 
             return;
@@ -266,6 +268,7 @@ export const wahaWebhook =
           const result =
             await addTrackingNumber(
               orderId,
+              courier,
               trackingNumber
             );
 
