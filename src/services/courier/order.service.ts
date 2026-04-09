@@ -71,6 +71,7 @@ export async function getOrderList() {
 
 export async function addTrackingNumber(
   orderId: number,
+  courier: string,
   trackingNumber: string
 ) {
 
@@ -86,7 +87,7 @@ export async function addTrackingNumber(
     });
 
   if (!orderId) {
-    throw new Error("ITEM_NOT_FOUND");
+    throw new Error("ORDER_NOT_FOUND");
   }
 
   // update order
@@ -97,7 +98,7 @@ export async function addTrackingNumber(
       },
       data: {
         trackingNumber,
-        courier: detectCourier(trackingNumber)
+        courier: courier
       }
     });
 

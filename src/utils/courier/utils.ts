@@ -47,8 +47,9 @@ export const parseCommand = (message: string) => {
 
     return {
       command: "ADDRESI",
-      itemId: parts[1],
-      trackingNumber: parts[2]
+      orderId: parts[1],
+      courier: parts[2],
+      trackingNumber: parts[3]
     };
 
   }
