@@ -183,7 +183,7 @@ export const wahaWebhook =
           const status =
             getOrderStatus(order);
           text += `============\n`;
-          text += `[${order.id}] - ${truncateText(order.storeName, 25)} - ${status}\n`;
+          text += `[${order.id}] - ${truncateText(order.storeName, 50)} - ${status}\n`;
 
           order.items.forEach(item => {
 
@@ -395,7 +395,7 @@ export const wahaWebhook =
               const shortName =
                 truncateText(
                   item.name,
-                  30
+                  50
                 );
 
               text +=

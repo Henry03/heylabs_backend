@@ -251,7 +251,7 @@ cron.schedule("0 * * * *", async () => {
             const shortName =
               truncateText(
                 item.name,
-                30
+                50
               );
 
             text +=
