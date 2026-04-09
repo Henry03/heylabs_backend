@@ -9,7 +9,7 @@ dotenv.config();
 const app = express();
 
 const allowedOrigins = [
-  "http://localhost:4003",
+  "http://localhost:7000",
   "https://heylabs.id",
   "http://heylabs.id"
 ];
@@ -33,7 +33,7 @@ app.use(bodyParser.json());
 
 app.use('/api/v1', router)
 
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });

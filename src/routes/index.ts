@@ -9,6 +9,7 @@ import topupRoutes from './topup.routes';
 import profileRoutes from './profile.routes';
 import userRoutes from './user.routes';
 import receiptRoutes from './receipt.routes';
+import wahaRoutes from './waha.routes';
 
 const router = Router();
 
@@ -21,5 +22,6 @@ router.use('/topup', topupRoutes);
 router.use('/profile', profileRoutes)
 router.use('/user', userRoutes)
 router.use('/receipt', receiptRoutes)
+router.use('/wa', wahaRoutes)
 
 export default router;

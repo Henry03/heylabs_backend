@@ -15,40 +15,43 @@ datasource db {
 }
 
 model User {
-  id            String      @id @default(cuid())
-  email         String      @unique
-  password      String
-  username      String      @unique
-  name          String
-  balance       Int         @default(0)
-  role          Role        @default(user)
-  verifiedAt    DateTime?
-  apiUsageLogs  ApiUsageLog[]
-  apiKeys       ApiKey[]
-  otps          UserOtp[]
-  topUpsSent     TopUpLog[] @relation("SentTopUps")
-  topUpsReceived TopUpLog[] @relation("ReceivedTopUps")
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id               String            @id @default(cuid())
+  email            String            @unique
+  password         String
+  username         String            @unique
+  name             String
+  balance          Int               @default(0)
+  role             Role              @default(user)
+  verifiedAt       DateTime?
+  apiUsageLogs     ApiUsageLog[]
+  apiKeys          ApiKey[]
+  otps             UserOtp[]
+  topUpsSent       TopUpLog[]        @relation("SentTopUps")
+  topUpsReceived   TopUpLog[]        @relation("ReceivedTopUps")
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  calendarProjects CalendarProject[]
+  calendarMembers  CalendarMember[]
+  events           Event[]
 }
 
 model ApiKey {
-  id        String    @id @default(cuid())
+  id        String        @id @default(cuid())
   name      String
-  prefix    String    @unique
-  key       String    
+  prefix    String        @unique
+  key       String
   userId    String
-  user      User      @relation(fields: [userId], references: [id])
+  user      User          @relation(fields: [userId], references: [id])
   apiUsage  ApiUsageLog[]
   expiresAt DateTime?
-  createdAt DateTime @default(now())
+  createdAt DateTime      @default(now())
 }
 
 model ApiEndpoint {
   id        String   @id @default(cuid())
-  name      String   @unique        
-  path      String   @unique        
-  price     Int                       
+  name      String   @unique
+  path      String   @unique
+  price     Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -56,44 +59,197 @@ model ApiEndpoint {
 }
 
 model ApiUsageLog {
-  id        String    @id @default(cuid())
-  userId    String
-  apiKeyId  String?
-  apiEndpointId  String?
-  cost      Int
-  errorCode String
-  reason    String
-  createdAt DateTime  @default(now())
-  user      User              @relation(fields: [userId], references: [id])
-  apiKey    ApiKey?            @relation(fields: [apiKeyId], references: [id])
-  apiEndpoint ApiEndpoint?     @relation(fields: [apiEndpointId], references: [id])
+  id            String       @id @default(cuid())
+  userId        String
+  apiKeyId      String?
+  apiEndpointId String?
+  cost          Int
+  errorCode     String
+  reason        String
+  createdAt     DateTime     @default(now())
+  user          User         @relation(fields: [userId], references: [id])
+  apiKey        ApiKey?      @relation(fields: [apiKeyId], references: [id])
+  apiEndpoint   ApiEndpoint? @relation(fields: [apiEndpointId], references: [id])
 }
 
 model UserOtp {
-  id        String  @id @default(cuid())
+  id        String   @id @default(cuid())
   userId    String
   otpCode   String
   expiresAt DateTime
   createdAt DateTime @default(now())
 
-  user      User     @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 }
 
 model TopUpLog {
-  id         String   @id @default(cuid())
-  senderId   String?  
-  sender     User?    @relation("SentTopUps", fields: [senderId], references: [id])
-  receiverId String   
-  receiver   User     @relation("ReceivedTopUps", fields: [receiverId], references: [id])
-  amount     Int
-  method     String   
-  status     String   
-  createdAt  DateTime @default(now())
+  id          String    @id @default(cuid())
+  senderId    String?
+  sender      User?     @relation("SentTopUps", fields: [senderId], references: [id])
+  receiverId  String
+  receiver    User      @relation("ReceivedTopUps", fields: [receiverId], references: [id])
+  amount      Int
+  method      String
+  status      String
+  createdAt   DateTime  @default(now())
   processedAt DateTime?
 }
-
 
 enum Role {
   admin
   user
+}
+
+// Calendar
+model CalendarProject {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  userId      String
+  user        User    @relation(fields: [userId], references: [id])
+
+  members CalendarMember[]
+  events  Event[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CalendarMember {
+  id        String          @id @default(cuid())
+  projectId String
+  project   CalendarProject @relation(fields: [projectId], references: [id])
+
+  userId String
+  user   User        @relation(fields: [userId], references: [id])
+  role   ProjectRole @default(viewer)
+
+  createdAt DateTime @default(now())
+
+  @@unique([projectId, userId])
+}
+
+model Event {
+  id            String   @id @default(cuid())
+  title         String
+  description   String?
+  startDateTime DateTime
+  endDateTime   DateTime
+  timezone      String   @default("UTC")
+
+  projectId String
+  userId    String
+  project   CalendarProject @relation(fields: [projectId], references: [id])
+  user      User            @relation(fields: [userId], references: [id])
+  reminders Reminder[]
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+}
+
+model Reminder {
+  id String @id @default(cuid())
+
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id])
+
+  reminderMinutesBefore Int
+  sendAt                DateTime
+  message               String?
+  useAI                 Boolean  @default(false)
+  aiPrompt              String?
+
+  reminderChannels ReminderChannel[]
+
+  createdAt        DateTime          @default(now())
+  notificationLogs NotificationLog[]
+}
+
+model ReminderChannel {
+  reminderId String
+  channelId  String
+  reminder   Reminder @relation(fields: [reminderId], references: [id])
+  channel    Channel  @relation(fields: [channelId], references: [id])
+
+  @@id([reminderId, channelId])
+}
+
+model NotificationLog {
+  id String @id @default(cuid())
+
+  reminderId String
+  reminder   Reminder @relation(fields: [reminderId], references: [id])
+
+  channelId String
+  channel   Channel @relation(fields: [channelId], references: [id])
+
+  status NotificationStatus
+
+  response String?
+
+  sentAt DateTime?
+
+  createdAt DateTime @default(now())
+}
+
+model Channel {
+  id               String            @id @default(cuid())
+  type             ChannelType
+  target           String
+  reminderChannels ReminderChannel[]
+  createdAt        DateTime          @default(now())
+  notificationLogs NotificationLog[]
+}
+
+enum ProjectRole {
+  owner
+  editor
+  viewer
+}
+
+enum ChannelType {
+  whatsapp
+  teams
+}
+
+enum NotificationStatus {
+  pending
+  sent
+  failed
+}
+
+
+// Waybill
+model Order {
+  id              Int @id @default(autoincrement())
+
+  trackingNumber  String?  // boleh null (resi menyusul)
+  courier         String?  // SPX / JNT / SICEPAT
+
+  storeName       String
+
+  subtotalProduct Int
+  shippingCost    Int
+  shippingDiscount Int
+  voucher         Int
+  serviceFee      Int
+  totalAmount     Int
+
+  deliveredAt      DateTime?
+
+  createdAt        DateTime @default(now())
+
+  items OrderItem[]
+}
+
+model OrderItem {
+  id        Int @id @default(autoincrement())
+
+  orderId   Int
+  order     Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  name      String
+  variation String?
+  quantity  Int
+  price  Int
+  discount  Int
 }
