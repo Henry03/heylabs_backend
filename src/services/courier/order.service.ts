@@ -1,5 +1,5 @@
 import prisma from "../../utils/prisma";
-import { detectCourier } from "../../utils/courier/utils";
+import { detectCourier, truncateText } from "../../utils/courier/utils";
 import cron from "node-cron";
 import { getSPXTracking } from "./spx.service";
 import { sendWhatsappMessage } from "./waha.service";
@@ -171,6 +171,7 @@ const WA_GROUP_NUMBER = "120363423177827833@g.us";
 
 cron.schedule("0 * * * *", async () => {
   console.log("Running hourly package tracker...");
+
   const orders = await prisma.order.findMany({
     where: {
       trackingNumber: { not: null },
@@ -178,35 +179,152 @@ cron.schedule("0 * * * *", async () => {
     }
   });
 
-  for (const order of orders) {
+  for (const dbOrder of orders) {
     try {
-      const tracking = await getSPXTracking(order.trackingNumber!);
-      const orderInfo = tracking?.data?.sls_tracking_info;
+
+      const tracking =
+        await getSPXTracking(
+          dbOrder.trackingNumber!
+        );
+
+      const orderInfo =
+        tracking?.data?.sls_tracking_info;
 
       if (!orderInfo) continue;
 
-      const latestHistory = orderInfo.records[0];
-      const status = latestHistory.tracking_name;
-      const actualTimeUnix = latestHistory.actual_time;
+      const latestHistory =
+        orderInfo.records[0];
 
-      if (status.toLowerCase() === "delivered" && actualTimeUnix) {
-        const deliveredAt = new Date(actualTimeUnix * 1000);
+      const status =
+        latestHistory.tracking_name;
 
+      const actualTimeUnix =
+        latestHistory.actual_time;
+
+      // =========================
+      // CHECK DELIVERED
+      // =========================
+
+      if (
+        status.toLowerCase() === "delivered"
+        && actualTimeUnix
+      ) {
+
+        const deliveredAt =
+          new Date(actualTimeUnix * 1000);
+
+        // update deliveredAt
         await prisma.order.update({
-          where: { id: order.id },
-          data: { deliveredAt: deliveredAt }
+          where: { id: dbOrder.id },
+          data: { deliveredAt }
         });
 
-        // Send WhatsApp message to group
-        const message = `📦 Paket untuk order *${order.id}* telah sampai!\n` +
-          `Mohon video unboxing tidak lebih dari 3 hari. Jika tidak, tidak bisa melakukan complain.`;
+        // =========================
+        // GET FULL ORDER DETAIL
+        // =========================
 
-        await sendWhatsappMessage(WA_GROUP_NUMBER, message);
+        const order =
+          await getOrderDetail(
+            dbOrder.id
+          );
 
-        console.log(`Order ${order.id} marked as delivered and message sent.`);
+        let text =
+`📦 *PAKET TELAH SAMPAI*`
++`\n━━━━━━━━━━━━━`
++`\n🧾 Order ID : ${order.id}`
++`\n🏪 Store    : ${order.storeName}`
++`\n`
++`\n📦 *Daftar Barang*`;
+
+        order.items.forEach(
+          (item, index) => {
+
+            const harga =
+              (item.price - item.discount)
+              / item.quantity;
+
+            const subtotal =
+              (harga * item.quantity)
+              / order.subtotalProduct
+              * order.totalAmount;
+
+            const shortName =
+              truncateText(
+                item.name,
+                30
+              );
+
+            text +=
+`\n━━━━━━━━━━━━━`
++`\n${index + 1}️ ${shortName}`
++`\n🏷️ Variant : ${item.variation || "-"}`
++`\n💰 Harga    : Rp${harga.toLocaleString()}`
++`\n🔢 Qty      : ${item.quantity}`
++`\n💵 Subtotal : Rp${subtotal.toLocaleString()}`;
+
+          }
+        );
+
+        text +=
+`\n━━━━━━━━━━━━━`
++`\n`
++`\n💵 *TOTAL PESANAN*`
++`\nRp${order.totalAmount.toLocaleString()}`
++`\n`
++`\n🚚 *STATUS PAKET*`
++`\n━━━━━━━━━━━━━`
++`\n🔎 No. Resi`
++`\n${order.trackingNumber}`
++`\n`
++`\n📍 Status`
++`\n_${status}_`
++`\n`
++`\n`;
+
+        // =========================
+        // ⚠️ WARNING UNBOXING
+        // =========================
+
+        text +=
+`━━━━━━━━━━━━━`
++`\n⚠️ *PENTING — VIDEO UNBOXING WAJIB*`
++`\n━━━━━━━━━━━━━`
++`\n`
++`\n📹 Harap rekam *VIDEO UNBOXING*`
++`\nsaat membuka paket.`
++`\n`
++`\n⏳ Maksimal *3 HARI*`
++`\nsetelah paket diterima.`
++`\n`
++`\n❌ Jika tidak ada video`
++`\nmaka *TIDAK BISA COMPLAIN*.`
++`\n`
++`\n🙏 Mohon diperhatikan.`
++`\nTerima kasih.`;
+
+        // =========================
+        // SEND TO GROUP
+        // =========================
+
+        await sendWhatsappMessage(
+          WA_GROUP_NUMBER,
+          text
+        );
+
+        console.log(
+          `Order ${order.id} delivered notification sent.`
+        );
+
       }
+
     } catch (err) {
-      console.error(`Error tracking order ${order.id}:`, err);
+
+      console.error(
+        `Error tracking order ${dbOrder.id}:`,
+        err
+      );
+
     }
   }
+
 });
