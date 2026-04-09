@@ -70,22 +70,22 @@ export async function getOrderList() {
 }
 
 export async function addTrackingNumber(
-  itemId: number,
+  orderId: number,
   trackingNumber: string
 ) {
 
   // cari item
-  const item =
-    await prisma.orderItem.findUnique({
+  const order =
+    await prisma.order.findUnique({
       where: {
-        id: itemId
+        id: orderId
       },
       include: {
-        order: true
+        items: true
       }
     });
 
-  if (!item) {
+  if (!orderId) {
     throw new Error("ITEM_NOT_FOUND");
   }
 
@@ -93,7 +93,7 @@ export async function addTrackingNumber(
   const updatedOrder =
     await prisma.order.update({
       where: {
-        id: item.orderId
+        id: order?.id
       },
       data: {
         trackingNumber,
@@ -102,7 +102,6 @@ export async function addTrackingNumber(
     });
 
   return {
-    item,
     order: updatedOrder
   };
 

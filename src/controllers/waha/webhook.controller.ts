@@ -247,13 +247,13 @@ export const wahaWebhook =
 
       if(command.command === "ADDRESI") {
         try {
-          const itemId =
-            Number(command.itemId);
+          const orderId =
+            Number(command.orderId);
 
           const trackingNumber =
             command.trackingNumber;
 
-          if (!itemId || !trackingNumber) {
+          if (!orderId || !trackingNumber) {
 
             await sendWhatsappMessage(
               from,
@@ -265,15 +265,15 @@ export const wahaWebhook =
 
           const result =
             await addTrackingNumber(
-              itemId,
+              orderId,
               trackingNumber
             );
 
           await sendWhatsappMessage(
             from,
             `✅ Resi berhasil ditambahkan!`
-            +`\n📦 Item: ${truncateText(result.item.name, 25)}`
-            +`\n📮 No Resi:${trackingNumber}`
+            +`\n📦 Item ID : ${result.order.id}`
+            +`\n📮 No Resi :${trackingNumber}`
           );
 
         } catch (error: any) {
