@@ -183,16 +183,16 @@ export const wahaWebhook =
           const status =
             getOrderStatus(order);
           text += `============\n`;
-          text += `[${order.id}] - ${truncateText(order.storeName, 50)} - ${status}\n`;
+          text += `[${order.id}] - ${truncateText(order.storeName, 25)} - ${status}\n`;
 
           order.items.forEach(item => {
 
             const shortName =
-              truncateText(item.name, 25);
+              truncateText(item.name, 50);
 
             const shortVariation =
               item.variation
-                ? truncateText(item.variation, 15)
+                ? truncateText(item.variation, 20)
                 : "-";
 
             text +=
@@ -202,8 +202,6 @@ export const wahaWebhook =
         ` 🏷️ Variant: ${shortVariation}\n\n`;
 
           });
-
-          text += "\n";
 
         });
 
