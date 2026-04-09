@@ -256,7 +256,7 @@ cron.schedule("0 * * * *", async () => {
 
             text +=
 `\n━━━━━━━━━━━━━`
-+`\n${index + 1}️ ${shortName}`
++`\n[${index + 1}️] ${item.name}`
 +`\n🏷️ Variant : ${item.variation || "-"}`
 +`\n💰 Harga    : Rp${harga.toLocaleString()}`
 +`\n🔢 Qty      : ${item.quantity}`
