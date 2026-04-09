@@ -233,7 +233,8 @@ export const wahaWebhook =
           await sendWhatsappMessage(
             from,
           `✅ Pesanan berhasil dibaca`
-
+          +`\n🆔 ID: ${order.id}`
+          +`\n${order.storeName}`
           +`\n🏪 Toko:`
           +`\n${order.storeName}`
           +`\n📦 Resi:`

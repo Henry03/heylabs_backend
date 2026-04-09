@@ -100,7 +100,13 @@ export function parseShopeeOrder(
   const lines = raw
     .split("\n")
     .map(l => l.trim())
-    .filter(l => l !== "");
+    .filter(l => {
+      const lower = l.toLowerCase();
+  return l !== "" && 
+         !lower.includes("chat") && 
+         !lower.includes("kunjungi toko");
+    });
+
 
   let storeName = lines[0];
 
