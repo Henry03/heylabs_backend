@@ -169,7 +169,7 @@ export async function setDeliveredAt(
 
 const WA_GROUP_NUMBER = "120363423177827833@g.us";
 
-cron.schedule("* * * * *", async () => {
+cron.schedule("0 * * * *", async () => {
   console.log("Running hourly package tracker...");
   const orders = await prisma.order.findMany({
     where: {
