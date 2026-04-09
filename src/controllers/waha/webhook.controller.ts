@@ -381,7 +381,7 @@ export const wahaWebhook =
       + `\n🧾 Order ID : ${order.id}`
       + `\n🏪 Store    : ${order.storeName}`
       + `\n\n📦 *Daftar Barang*`
-      + `\n━━━━━━━━━━━━━`
+
       ;
 
           let total = 0;
@@ -399,21 +399,20 @@ export const wahaWebhook =
                 );
 
               text +=
-          `\n${index + 1}️ ${shortName}`
+          `\n━━━━━━━━━━━━━`
+          +`\n${index + 1}️ ${shortName}`
           +`\n🏷️ Variant : ${item.variation || "-"}`
           +`\n💰 Harga    : Rp${harga.toLocaleString()}`
           +`\n🔢 Qty      : ${item.quantity}`
           +`\n💵 Subtotal : Rp${subtotal.toLocaleString()}`;
 
-            text +=
-            `\n━━━━━━━━━━━━━`
-            + `\n💰 *RINCIAN BIAYA*`
-            + `\n━━━━━━━━━━━━━`
-            + `\n\n💵 *TOTAL PESANAN*`
-            + `\nRp${order.totalAmount.toLocaleString()}`;
-
             }
           );
+
+            text +=
+            `\n━━━━━━━━━━━━━`
+            + `\n\n💵 *TOTAL PESANAN*`
+            + `\nRp${order.totalAmount.toLocaleString()}\n`;
 
           // =========================
           // TRACKING SPX
