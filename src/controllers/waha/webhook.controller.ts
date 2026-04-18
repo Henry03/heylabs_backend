@@ -387,8 +387,11 @@ export const wahaWebhook =
           order.items.forEach(
             (item, index) => {
 
-              const harga = (item.price - item.discount)/item.quantity;
-              const subtotal = (harga*item.quantity)/order.subtotalProduct*order.totalAmount;
+            const harga =
+              (item.price - item.discount) / order.subtotalProduct * order.totalAmount/item.quantity;
+
+            const subtotal =
+              (harga * item.quantity)
 
               const shortName =
                 truncateText(

@@ -240,13 +240,10 @@ cron.schedule("0 * * * *", async () => {
           (item, index) => {
 
             const harga =
-              (item.price - item.discount)
-              / item.quantity;
+              (item.price - item.discount) / order.subtotalProduct * order.totalAmount/item.quantity;
 
             const subtotal =
               (harga * item.quantity)
-              / order.subtotalProduct
-              * order.totalAmount;
 
             const shortName =
               truncateText(
