@@ -55,18 +55,29 @@ export async function saveOrder(
 
 }
 
-export async function getOrderList() {
+export async function getOrderList(page = 1, limit = 10) {
+  const skip = (page - 1) * limit;
 
-  return prisma.order.findMany({
-    take: 10,
+  const orders = await prisma.order.findMany({
+    skip,
+    take: limit,
     orderBy: {
-      id: "desc"
+      id: "desc",
     },
     include: {
-      items: true
-    }
+      items: true,
+    },
   });
 
+  return orders.sort((a, b) => {
+    const getPriority = (order: any) => {
+      if (!order.trackingNumber) return 1; // Belum dikirim
+      if (order.trackingNumber && !order.deliveredAt) return 2; // Dikirim
+      return 3; // Delivered
+    };
+
+    return getPriority(a) - getPriority(b);
+  });
 }
 
 export async function addTrackingNumber(
@@ -236,11 +247,15 @@ cron.schedule("0 * * * *", async () => {
 +`\n`
 +`\n📦 *Daftar Barang*`;
 
+        const subtotalProduct = order.items.reduce((total, item) => {
+          return total + ((item.price - item.discount) * item.quantity);
+        }, 0);
+
         order.items.forEach(
           (item, index) => {
 
             const harga =
-              (item.price - item.discount) / order.subtotalProduct * order.totalAmount/item.quantity;
+              (item.price - item.discount) * item.quantity / subtotalProduct * order.totalAmount/item.quantity;
 
             const subtotal =
               (harga * item.quantity)

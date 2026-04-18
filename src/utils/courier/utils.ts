@@ -12,10 +12,16 @@ export const parseCommand = (message: string) => {
   //   };
   // }
 
-  if (text === "#LIST") 
+  if (text.startsWith("#LIST")){
+    const parts =
+        text.split(" ");
+
     return {
-      command: "LIST"
+      command: "LIST",
+      page : parts[1]
+
     }
+  }
   
 
   if (text.startsWith("TRACK")) {
@@ -39,6 +45,14 @@ export const parseCommand = (message: string) => {
     return {
       command: "ADDORDER",
       raw
+    }
+  }
+
+  if (text.startsWith("#COMPLETEORDER")) {
+    const parts = text.split(" ");
+    return {
+      command: "COMPLETEORDER",
+      orderId: parts[1]
     }
   }
 

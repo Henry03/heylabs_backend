@@ -163,7 +163,10 @@ export const wahaWebhook =
       // }
 
       if(command.command === "LIST") {
-        const orders = await getOrderList();
+        const page = Number(command.page) || 1;
+        const limit = 10;
+
+        const orders = await getOrderList(page, limit);
 
         if (orders.length === 0) {
 
@@ -204,6 +207,16 @@ export const wahaWebhook =
           });
 
         });
+
+        text += `\n\n📄 Page ${page}\n`;
+
+        if (orders.length === limit) {
+          text += `➡️ Ketik: #LIST ${page + 1} untuk lanjut\n`;
+        }
+
+        if (page > 1) {
+          text += `⬅️ Ketik: #LIST ${page - 1} untuk kembali\n`;
+        }
 
         text +=
         `Ketik:\n#DETAIL [ID ORDER]\nuntuk cek detail.`;
@@ -352,6 +365,68 @@ export const wahaWebhook =
 
       }
 
+      if (command.command === "COMPLETEORDER") {
+        try {
+
+          const orderId =
+            Number(command.orderId);
+
+          if (!orderId || isNaN(orderId)) {
+            await sendWhatsappMessage(
+              from,
+              "❌ Format salah.\nGunakan:\n#COMPLETEORDER [ID ORDER]"
+            );
+            return;
+          }
+
+
+          const date = new Date();
+          const orderDetail = await getOrderDetail(orderId)
+
+          if(!orderDetail) {
+            await sendWhatsappMessage(
+              from,
+              "❌ Order tidak ditemukan."
+            );
+            return;
+          }
+
+            await setDeliveredAt(date, orderDetail.id)
+
+            await sendWhatsappMessage(
+                  from,
+            `🗑️ Order completed!
+
+            📦 Order ID: ${orderDetail.id}
+            🏪 Courier : ${orderDetail.courier}
+            🏪 Resi: ${orderDetail.trackingNumber}
+            🏪 Delivered At: ${date}`
+          );
+
+        } catch (error: any) {
+
+          if (error.message === "ORDER_NOT_FOUND") {
+
+            await sendWhatsappMessage(
+              from,
+              "❌ Order tidak ditemukan."
+            );
+
+            return;
+
+          }
+
+          console.error(error);
+
+          await sendWhatsappMessage(
+            from,
+            "❌ Gagal complete order."
+          );
+
+        }
+
+      }
+
       if (command.command === "DETAIL") {
 
         try {
@@ -382,13 +457,15 @@ export const wahaWebhook =
 
       ;
 
-          let total = 0;
+          const subtotalProduct = order.items.reduce((total, item) => {
+            return total + ((item.price - item.discount) * item.quantity);
+          }, 0);
 
           order.items.forEach(
             (item, index) => {
 
             const harga =
-              (item.price - item.discount) / order.subtotalProduct * order.totalAmount/item.quantity;
+              (item.price - item.discount) * item.quantity / subtotalProduct * order.totalAmount/item.quantity;
 
             const subtotal =
               (harga * item.quantity)
