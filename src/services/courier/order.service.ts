@@ -255,7 +255,7 @@ cron.schedule("0 * * * *", async () => {
           (item, index) => {
 
             const harga =
-              Math.ceil((item.price - item.discount) * item.quantity / subtotalProduct * order.totalAmount/item.quantity);
+              (item.price - item.discount) * item.quantity / subtotalProduct * order.totalAmount/item.quantity;
 
             const subtotal =
               Math.ceil((harga * item.quantity))
@@ -270,7 +270,7 @@ cron.schedule("0 * * * *", async () => {
 `\n━━━━━━━━━━━━━`
 +`\n[${index + 1}️] ${item.name}`
 +`\n🏷️ Variant : ${item.variation || "-"}`
-+`\n💰 Harga    : Rp${harga.toLocaleString()}`
++`\n💰 Harga    : Rp${Math.ceil(harga).toLocaleString()}`
 +`\n🔢 Qty      : ${item.quantity}`
 +`\n💵 Subtotal : Rp${subtotal.toLocaleString()}`;
 

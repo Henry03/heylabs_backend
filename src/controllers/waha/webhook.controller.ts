@@ -464,8 +464,7 @@ export const wahaWebhook =
           order.items.forEach(
             (item, index) => {
 
-            const harga =
-              Math.ceil((item.price - item.discount) * item.quantity / subtotalProduct * order.totalAmount/item.quantity);
+            const harga = (item.price - item.discount) * item.quantity / subtotalProduct * order.totalAmount/item.quantity;
 
             const subtotal =
               Math.ceil((harga * item.quantity))
@@ -480,7 +479,7 @@ export const wahaWebhook =
           `\n━━━━━━━━━━━━━`
           +`\n[${index + 1}️] ${item.name}`
           +`\n🏷️ Variant : ${item.variation || "-"}`
-          +`\n💰 Harga    : Rp${harga.toLocaleString()}`
+          +`\n💰 Harga    : Rp${Math.ceil(harga).toLocaleString()}`
           +`\n🔢 Qty      : ${item.quantity}`
           +`\n💵 Subtotal : Rp${subtotal.toLocaleString()}`;
 
