@@ -255,10 +255,10 @@ cron.schedule("0 * * * *", async () => {
           (item, index) => {
 
             const harga =
-              (item.price - item.discount) * item.quantity / subtotalProduct * order.totalAmount/item.quantity;
+              Math.ceil((item.price - item.discount) * item.quantity / subtotalProduct * order.totalAmount/item.quantity);
 
             const subtotal =
-              (harga * item.quantity)
+              Math.ceil((harga * item.quantity))
 
             const shortName =
               truncateText(
@@ -281,7 +281,7 @@ cron.schedule("0 * * * *", async () => {
 `\n━━━━━━━━━━━━━`
 +`\n`
 +`\n💵 *TOTAL PESANAN*`
-+`\nRp${order.totalAmount.toLocaleString()}`
++`\nRp${Math.ceil(order.totalAmount).toLocaleString()}`
 +`\n`
 +`\n🚚 *STATUS PAKET*`
 +`\n━━━━━━━━━━━━━`

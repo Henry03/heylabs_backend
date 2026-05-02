@@ -465,10 +465,10 @@ export const wahaWebhook =
             (item, index) => {
 
             const harga =
-              (item.price - item.discount) * item.quantity / subtotalProduct * order.totalAmount/item.quantity;
+              Math.ceil((item.price - item.discount) * item.quantity / subtotalProduct * order.totalAmount/item.quantity);
 
             const subtotal =
-              (harga * item.quantity)
+              Math.ceil((harga * item.quantity))
 
               const shortName =
                 truncateText(
@@ -490,7 +490,7 @@ export const wahaWebhook =
             text +=
             `\n━━━━━━━━━━━━━`
             + `\n\n💵 *TOTAL PESANAN*`
-            + `\nRp${order.totalAmount.toLocaleString()}\n`;
+            + `\nRp${Math.ceil(order.totalAmount).toLocaleString()}\n`;
 
           // =========================
           // TRACKING SPX
