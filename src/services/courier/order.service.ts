@@ -1,7 +1,7 @@
 import prisma from "../../utils/prisma";
 import { detectCourier, truncateText } from "../../utils/courier/utils";
 import cron from "node-cron";
-import { getSPXTracking } from "./spx.service";
+import { getSPXTracking, getTracking } from "./track.service";
 import { sendWhatsappMessage } from "./waha.service";
 
 export async function saveOrder(
@@ -198,41 +198,70 @@ cron.schedule("0 * * * *", async () => {
           dbOrder.trackingNumber!
         );
 
-      const orderInfo =
-        tracking?.data?.sls_tracking_info;
+      let status = "";
 
-      if (!orderInfo) continue;
+      if(tracking?.retcode == 0){
+        const orderInfo = tracking?.data?.sls_tracking_info;
+  
+        if (!orderInfo) continue;
+        if (!orderInfo.history?.length) {
+          continue;
+        }
 
-      const latestHistory =
-        orderInfo.records[0];
+        const latestHistory = orderInfo.records[0];
+        status = latestHistory.tracking_name;
+        const actualTimeUnix = latestHistory.actual_time;
+  
+        if (
+          status.toLowerCase() === "delivered"
+          && actualTimeUnix
+        ) {
+          const deliveredAt = new Date(actualTimeUnix * 1000);
+  
+          await prisma.order.update({
+            where: { id: dbOrder.id },
+            data: { deliveredAt }
+          });
+        }
+        else {
+          continue;
+        }
+      } else {
+        const currentHour = new Date().getHours();
 
-      const status =
-        latestHistory.tracking_name;
+        if (currentHour !== 12 && currentHour !== 18) {
+          console.log("Skipping general tracking");
+          continue;
+        }
+        
+        const generalTrack = await getTracking(
+          dbOrder.trackingNumber || "",
+          dbOrder.courier?.toLowerCase() || ""
+        );
 
-      const actualTimeUnix =
-        latestHistory.actual_time;
+        const orderGeneralInfo = generalTrack.data;
 
-      // =========================
-      // CHECK DELIVERED
-      // =========================
+        if (orderGeneralInfo) {
+          if (!orderGeneralInfo.history?.length) {
+            continue;
+          }
 
-      if (
-        status.toLowerCase() === "delivered"
-        && actualTimeUnix
-      ) {
+          const latestHistory = orderGeneralInfo.history[0];
+          status = orderGeneralInfo.summary.status;
+          const actualTimeUnix = latestHistory.date;
 
-        const deliveredAt =
-          new Date(actualTimeUnix * 1000);
+          const deliveredAt =
+            status.toLowerCase() === "delivered" && actualTimeUnix
+              ? new Date(actualTimeUnix)
+              : null;
 
-        // update deliveredAt
-        await prisma.order.update({
-          where: { id: dbOrder.id },
-          data: { deliveredAt }
-        });
-
-        // =========================
-        // GET FULL ORDER DETAIL
-        // =========================
+          if (deliveredAt) {
+            await setDeliveredAt(deliveredAt, dbOrder.id)
+          }else {
+            continue;
+          }
+        }
+      }
 
         const order =
           await getOrderDetail(
@@ -240,12 +269,12 @@ cron.schedule("0 * * * *", async () => {
           );
 
         let text =
-`📦 *PAKET TELAH SAMPAI*`
-+`\n━━━━━━━━━━━━━`
-+`\n🧾 Order ID : ${order.id}`
-+`\n🏪 Store    : ${order.storeName}`
-+`\n`
-+`\n📦 *Daftar Barang*`;
+        `📦 *PAKET TELAH SAMPAI*`
+        +`\n━━━━━━━━━━━━━`
+        +`\n🧾 Order ID : ${order.id}`
+        +`\n🏪 Store    : ${order.storeName}`
+        +`\n`
+        +`\n📦 *Daftar Barang*`;
 
         const subtotalProduct = order.items.reduce((total, item) => {
           return total + ((item.price - item.discount) * item.quantity);
@@ -267,31 +296,31 @@ cron.schedule("0 * * * *", async () => {
               );
 
             text +=
-`\n━━━━━━━━━━━━━`
-+`\n[${index + 1}️] ${item.name}`
-+`\n🏷️ Variant : ${item.variation || "-"}`
-+`\n💰 Harga    : Rp${Math.ceil(harga).toLocaleString()}`
-+`\n🔢 Qty      : ${item.quantity}`
-+`\n💵 Subtotal : Rp${subtotal.toLocaleString()}`;
+            `\n━━━━━━━━━━━━━`
+            +`\n[${index + 1}️] ${item.name}`
+            +`\n🏷️ Variant : ${item.variation || "-"}`
+            +`\n💰 Harga    : Rp${Math.ceil(harga).toLocaleString()}`
+            +`\n🔢 Qty      : ${item.quantity}`
+            +`\n💵 Subtotal : Rp${subtotal.toLocaleString()}`;
 
           }
         );
 
         text +=
-`\n━━━━━━━━━━━━━`
-+`\n`
-+`\n💵 *TOTAL PESANAN*`
-+`\nRp${Math.ceil(order.totalAmount).toLocaleString()}`
-+`\n`
-+`\n🚚 *STATUS PAKET*`
-+`\n━━━━━━━━━━━━━`
-+`\n🔎 No. Resi`
-+`\n${order.trackingNumber}`
-+`\n`
-+`\n📍 Status`
-+`\n_${status}_`
-+`\n`
-+`\n`;
+          `\n━━━━━━━━━━━━━`
+          +`\n`
+          +`\n💵 *TOTAL PESANAN*`
+          +`\nRp${Math.ceil(order.totalAmount).toLocaleString()}`
+          +`\n`
+          +`\n🚚 *STATUS PAKET*`
+          +`\n━━━━━━━━━━━━━`
+          +`\n🔎 No. Resi`
+          +`\n${order.trackingNumber}`
+          +`\n`
+          +`\n📍 Status`
+          +`\n_${status}_`
+          +`\n`
+          +`\n`;
 
         // =========================
         // ⚠️ WARNING UNBOXING
@@ -327,7 +356,7 @@ cron.schedule("0 * * * *", async () => {
           `Order ${order.id} delivered notification sent.`
         );
 
-      }
+      
 
     } catch (err) {
 

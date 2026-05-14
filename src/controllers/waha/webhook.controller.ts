@@ -6,8 +6,9 @@ import {
 } from "../../utils/courier/utils"
 
 import {
-  getSPXTracking
-} from "../../services/courier/spx.service";
+  getSPXTracking,
+  getTracking
+} from "../../services/courier/track.service";
 
 import {
   sendWhatsappMessage
@@ -496,45 +497,84 @@ export const wahaWebhook =
           // =========================
 
           if (order.trackingNumber) {
-
             const tracking =
               await getSPXTracking(
                 order.trackingNumber
               );
+              console.log(tracking)
+              if(tracking?.retcode == 0){
+                const orderInfo =
+                  tracking?.data?.sls_tracking_info;
+    
+                if (orderInfo) {
+                  const latestHistory = orderInfo.records[0];
+                  const status = latestHistory.tracking_name;
+                  const description = latestHistory.description;
+                  const currentLocation = latestHistory.current_location.location_name;
+                  const actualTimeUnix = latestHistory.actual_time;
+    
+                  const deliveredAt =
+                    status.toLowerCase() === "delivered" && actualTimeUnix
+                      ? new Date(actualTimeUnix * 1000)
+                      : null;
+    
+                  if (deliveredAt) {
+                    await setDeliveredAt(deliveredAt, order.id)
+                  }
+    
+                  text +=
+                    `\n━━━━━━━━━━━━━`
+                    +`\n🚚 *STATUS PAKET*`
+                    +`\n━━━━━━━━━━━━━`
+                    +`\n🔎 No. Resi`
+                    +`\n${order.trackingNumber}`
+                    +`\n📍 Status Saat Ini`
+                    +`\n_${status}_`
+                    +`\n📌 Lokasi Paket`
+                    +`\n${currentLocation}`
+                    +`\n📝 Deskripsi`
+                    +`\n${description}`;
+                }
+              } else {
+                const generalTrack = await getTracking(
+                  order.trackingNumber,
+                  order.courier?.toLowerCase() || ""
+                );
 
-            const orderInfo =
-              tracking?.data?.sls_tracking_info;
+                console.log(generalTrack)
 
-            if (orderInfo) {
-              const latestHistory = orderInfo.records[0];
-              const status = latestHistory.tracking_name;
-              const description = latestHistory.description;
-              const currentLocation = latestHistory.current_location.location_name;
-              const actualTimeUnix = latestHistory.actual_time;
+                const orderGeneralInfo = generalTrack.data;
 
-              const deliveredAt =
-                status.toLowerCase() === "delivered" && actualTimeUnix
-                  ? new Date(actualTimeUnix * 1000)
-                  : null;
-
-              if (deliveredAt) {
-                await setDeliveredAt(deliveredAt, order.id)
+                if (orderGeneralInfo) {
+                  const latestHistory = orderGeneralInfo.history[0];
+                  const status = orderGeneralInfo.summary.status;
+                  const description = latestHistory.desc;
+                  const currentLocation = "-";
+                  const actualTimeUnix = latestHistory.date;
+    
+                  const deliveredAt =
+                    status.toLowerCase() === "delivered" && actualTimeUnix
+                      ? new Date(actualTimeUnix)
+                      : null;
+    
+                  if (deliveredAt) {
+                    await setDeliveredAt(deliveredAt, order.id)
+                  }
+    
+                  text +=
+                    `\n━━━━━━━━━━━━━`
+                    +`\n🚚 *STATUS PAKET*`
+                    +`\n━━━━━━━━━━━━━`
+                    +`\n🔎 No. Resi`
+                    +`\n${order.trackingNumber}`
+                    +`\n📍 Status Saat Ini`
+                    +`\n_${status}_`
+                    +`\n📌 Lokasi Paket`
+                    +`\n${currentLocation}`
+                    +`\n📝 Deskripsi`
+                    +`\n${description}`;
+                }
               }
-
-              text +=
-                `\n━━━━━━━━━━━━━`
-                +`\n🚚 *STATUS PAKET*`
-                +`\n━━━━━━━━━━━━━`
-                +`\n🔎 No. Resi`
-                +`\n${order.trackingNumber}`
-                +`\n📍 Status Saat Ini`
-                +`\n_${status}_`
-                +`\n📌 Lokasi Paket`
-                +`\n${currentLocation}`
-                +`\n📝 Deskripsi`
-                +`\n${description}`;
-
-            }
 
           } else {
 
