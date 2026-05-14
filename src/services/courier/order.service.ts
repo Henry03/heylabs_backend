@@ -180,7 +180,7 @@ export async function setDeliveredAt(
 
 const WA_GROUP_NUMBER = "120363423177827833@g.us";
 
-cron.schedule("0 * * * *", async () => {
+cron.schedule("* * * * *", async () => {
   console.log("Running hourly package tracker...");
 
   const orders = await prisma.order.findMany({
@@ -202,15 +202,15 @@ cron.schedule("0 * * * *", async () => {
 
       if(tracking?.retcode == 0){
         const orderInfo = tracking?.data?.sls_tracking_info;
-  
         if (!orderInfo) continue;
-        if (!orderInfo.history?.length) {
+        if (!orderInfo.records?.length) {
           continue;
         }
 
         const latestHistory = orderInfo.records[0];
         status = latestHistory.tracking_name;
         const actualTimeUnix = latestHistory.actual_time;
+
   
         if (
           status.toLowerCase() === "delivered"

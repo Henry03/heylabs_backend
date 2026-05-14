@@ -20,7 +20,8 @@ export const getTracking =
       `https://api.binderbyte.com/v1/track` +
       `?api_key=${process.env.BINDERBYTE_API_KEY}` +
       `&courier=${courier}` +
-      `&awb=${trackingNumber}`;
+      `&awb=${trackingNumber}` +
+      `&number=89153`;
 
     const response =
       await axios.get(url);
