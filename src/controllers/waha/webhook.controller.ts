@@ -11,9 +11,14 @@ import {
 } from "../../services/courier/track.service";
 
 import {
+  sendWhatsappDocument,
   sendWhatsappMessage
 } from "../../services/courier/waha.service";
 import { addTrackingNumber, deleteOrder, getOrderDetail, getOrderList, saveOrder, setDeliveredAt } from "../../services/courier/order.service";
+import { addCredit, deleteCredit, getCreditList } from "../../services/courier/credit.service";
+import { generateMonthlyData } from "../../services/courier/report.service";
+import { buildMonthlyPDF } from "../../utils/reports/monthlyReport";
+import { formatDate, rupiah } from "../../utils/reports/pdfHelper";
 
 export const wahaWebhook =
   async (req: any, res: any) => {
@@ -641,6 +646,18 @@ export const wahaWebhook =
         +`\n\n📖 *BANTUAN*`
         +`\n#COMMAND`
         +`\n→ Menampilkan semua perintah`
+
+        +`\n\n💰 KEUANGAN`
+        +`\n━━━━━━━━━━━━━`
+        +`\n`
+        +`\n#KREDIT [Nama] [Bank] [Nominal]`
+        +`\n→ Tambah kredit`
+        +`\n`
+        +`\n#LISTKREDIT`
+        +`\n→ Daftar kredit`
+        +`\n`
+        +`\n#DELETEKREDIT [ID]`
+        +`\n→ Hapus kredit`
         ;
 
           await sendWhatsappMessage(
@@ -650,6 +667,234 @@ export const wahaWebhook =
 
         }
 
+      if(command.command==="KREDIT"){
+        try{
+          const name =
+              command.name;
+          const bank =
+              command.bank;
+          const nominal =
+              Number(
+                  command.nominal
+                      ?.replace(/[^0-9]/g,"")
+              );
+
+          if(
+              !name ||
+              !bank ||
+              !nominal
+          ){
+
+              await sendWhatsappMessage(
+                  from,
+              `❌ Format salah
+
+              #KREDIT [Nama] [Bank] [Nominal]
+
+              Contoh
+
+              #KREDIT Henry BCA 5000000`
+              );
+
+              return;
+
+          }
+
+          const credit =
+            await addCredit(
+                name,
+                bank,
+                nominal
+            );
+
+          await sendWhatsappMessage(
+            from,
+            `✅ Kredit berhasil ditambahkan
+            ID : ${credit.id}
+            Nama :
+            ${credit.name}
+            Bank :
+            ${credit.bank}
+            Nominal :
+            Rp${credit.nominal.toLocaleString("id-ID")}`
+            );
+          }
+          catch(err){
+            console.error(err);
+
+            await sendWhatsappMessage(
+                from,
+                "Gagal menambah kredit."
+            );
+          }
+        }
+
+      if(command.command==="LISTKREDIT"){
+
+            const page =
+                Number(command.page)||1;
+
+            const limit=10;
+
+            const credits =
+                await getCreditList(
+                    page,
+                    limit
+                );
+
+            if(!credits.length){
+
+                await sendWhatsappMessage(
+                    from,
+                    "Belum ada kredit."
+                );
+
+                return;
+            }
+
+            let text=
+`💰 *DAFTAR KREDIT*
+
+`;
+
+          credits.forEach((item,index)=>{
+            text+=
+`[${item.id}] ${item.createdAt.toLocaleDateString("id-ID")}
+${item.name} - ${item.bank}
+Rp${item.nominal.toLocaleString("id-ID")}
+
+`;
+          });
+
+          await sendWhatsappMessage(
+              from,
+              text
+          );
+      }
+
+      if(command.command==="DELETEKREDIT"){
+        try{
+            const id=
+                Number(command.id);
+
+            if(!id){
+                await sendWhatsappMessage(
+                    from,
+                    "Format:\n#DELETEKREDIT [ID]"
+                );
+
+                return;
+            }
+
+            const credit=
+              await deleteCredit(id);
+
+              await sendWhatsappMessage(
+                from,
+      `✅ Kredit berhasil dihapus
+
+      ${credit.name}
+
+      Rp${credit.nominal.toLocaleString("id-ID")}`
+              );
+            }
+
+            catch(err:any){
+              if(
+                  err.message==="CREDIT_NOT_FOUND"
+              ){
+                  await sendWhatsappMessage(
+                      from,
+                      "Kredit tidak ditemukan."
+                  );
+                  return;
+              }
+
+              await sendWhatsappMessage(
+                  from,
+                  "Gagal menghapus kredit."
+              );
+            }
+
+      }
+
+      if(command.command==="REPORT"){
+
+        try{
+
+            const month =
+                command.month;
+
+            const year =
+                command.year;
+
+            if(
+
+                !month ||
+
+                !year
+
+            ){
+
+                await sendWhatsappMessage(
+
+                    from,
+
+    `Format
+
+    #REPORT [bulan] [tahun]
+
+    Contoh
+
+    #REPORT 6 2026`
+
+                );
+
+                return;
+
+            }
+
+    //         
+    const pdf =
+    await buildMonthlyPDF(
+        month,
+        year
+    );
+
+const report = await generateMonthlyData(month, year);
+
+const caption =
+`📊 *MONTHLY FINANCIAL REPORT*
+
+📅 ${formatDate(report.start)} - ${formatDate(
+    new Date(report.end.getTime() - 1)
+)}
+
+💰 Total Uang Masuk
+${rupiah(report.totalCredit)}
+
+🛒 Total Belanja
+${rupiah(report.totalOrder)}
+
+💵 Sisa Uang
+${rupiah(report.closingBalance)}
+
+📎 Laporan PDF terlampir.`;
+
+await sendWhatsappDocument(
+    from,
+    pdf,
+    `${caption}`
+)
+        }
+
+        catch(err){
+
+            console.error(err);
+
+        }
+
+    }
     } catch (error: any) {
       console.error(error);
 

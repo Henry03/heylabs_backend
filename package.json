@@ -34,6 +34,7 @@
     "nodemailer": "^7.0.9",
     "nodemon": "^3.1.10",
     "openai": "^6.2.0",
+    "pdfkit": "^0.19.1",
     "prisma": "^6.19.2",
     "sharp": "^0.34.4",
     "tesseract.js": "^6.0.1",
@@ -44,6 +45,7 @@
     "@types/express": "^5.0.3",
     "@types/multer": "^2.0.0",
     "@types/node": "^24.7.0",
+    "@types/pdfkit": "^0.17.6",
     "@types/winston": "^2.4.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"

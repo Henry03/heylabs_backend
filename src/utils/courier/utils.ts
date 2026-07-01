@@ -6,13 +6,15 @@ export const parseCommand = (message: string) => {
   const text =
     message.trim().toUpperCase();
 
+  const command = text.trim().split(/\s+/)[0]
+
   // if (text === "LIST") {
   //   return {
   //     command: "LIST"
   //   };
   // }
 
-  if (text.startsWith("#LIST")){
+  if (command === "#LIST"){
     const parts =
         text.split(" ");
 
@@ -24,7 +26,7 @@ export const parseCommand = (message: string) => {
   }
   
 
-  if (text.startsWith("TRACK")) {
+  if (command === "TRACK") {
 
       const parts =
           text.split(" ");
@@ -36,7 +38,7 @@ export const parseCommand = (message: string) => {
       };
   }
 
-  if (text.startsWith("#ADDORDER")) {
+  if (command === "#ADDORDER") {
     const raw =
       text
         .replace("#ADDORDER", "")
@@ -48,7 +50,7 @@ export const parseCommand = (message: string) => {
     }
   }
 
-  if (text.startsWith("#COMPLETEORDER")) {
+  if (command === "#COMPLETEORDER") {
     const parts = text.split(" ");
     return {
       command: "COMPLETEORDER",
@@ -56,7 +58,7 @@ export const parseCommand = (message: string) => {
     }
   }
 
-  if (text.startsWith("#ADDRESI")) {
+  if (command === "#ADDRESI") {
     const parts = text.split(" ");
 
     return {
@@ -68,7 +70,7 @@ export const parseCommand = (message: string) => {
 
   }
 
-  if (text.startsWith("#DELETEORDER")) {
+  if (command === "#DELETEORDER") {
     const parts = text.split(" ");
 
     return {
@@ -78,7 +80,7 @@ export const parseCommand = (message: string) => {
 
   }
 
-  if (text.startsWith("#DETAIL")) {
+  if (command === "#DETAIL") {
 
     const parts = text.split(" ");
 
@@ -89,10 +91,49 @@ export const parseCommand = (message: string) => {
 
   }
 
-  if (text.startsWith("#COMMAND")) {
+  if (command === "#COMMAND") {
 
     return {
       command: "COMMAND"
+    };
+
+  }
+
+  if(command === "#KREDIT"){
+    const parts = message.trim().split(/\s+/);
+    return {
+        command:"KREDIT",
+        name:parts[1],
+        bank:parts[2],
+        nominal:parts[3]
+    };
+  }
+
+  if(command === "#LISTKREDIT"){
+    const parts = message.trim().split(/\s+/);
+
+    return{
+        command:"LISTKREDIT",
+        page:parts[1]
+    };
+  }
+
+  if(command === "#DELETEKREDIT"){
+    const parts = message.trim().split(/\s+/);
+
+    return{
+        command:"DELETEKREDIT",
+        id:parts[1]
+    };
+  }
+
+  if(command === "#REPORT"){
+    const parts =
+        message.trim().split(/\s+/);
+    return{
+        command:"REPORT",
+        month:Number(parts[1]),
+        year:Number(parts[2])
     };
 
   }

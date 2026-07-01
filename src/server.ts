@@ -3,6 +3,8 @@ import bodyParser from "body-parser";
 import router from './routes';
 import dotenv from "dotenv";
 import cors from "cors";
+import path from "path";
+import "../src/services/courier/report.scheduler";
 
 dotenv.config();
 
@@ -32,6 +34,13 @@ app.use(
 app.use(bodyParser.json());
 
 app.use('/api/v1', router)
+
+app.use(
+    "/generatedReport",
+    express.static(
+        path.join(__dirname, "../public/generatedReport")
+    )
+);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {

@@ -253,3 +253,26 @@ model OrderItem {
   price  Int
   discount  Int
 }
+
+model Credit {
+  id         Int      @id @default(autoincrement())
+
+  name       String
+  bank       String
+  nominal    Int
+
+  createdAt  DateTime @default(now())
+}
+
+model ReportLog {
+  id        Int @id @default(autoincrement())
+
+  month     Int
+  year      Int
+
+  fileName  String
+
+  sentAt    DateTime @default(now())
+
+  @@unique([month, year])
+}
