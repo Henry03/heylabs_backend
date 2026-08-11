@@ -195,7 +195,6 @@ export const wahaWebhook =
       if(command.command === "LIST") {
         const page = Number(command.page) || 1;
         const limit = 20;
-        const limit = 20;
 
         const orders = await getOrderList(page, limit);
 
