@@ -179,6 +179,7 @@ export async function setDeliveredAt(
 }
 
 const WA_GROUP_NUMBER = "120363423177827833@g.us";
+const grupBelanjaOnline = "120363411169151632@g.us";
 
 cron.schedule("0 * * * *", async () => {
   console.log("Running hourly package tracker...");
@@ -348,7 +349,7 @@ cron.schedule("0 * * * *", async () => {
         // =========================
 
         await sendWhatsappMessage(
-          WA_GROUP_NUMBER,
+          grupBelanjaOnline,
           text
         );
 

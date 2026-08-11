@@ -20,6 +20,11 @@ import { generateMonthlyData } from "../../services/courier/report.service";
 import { buildMonthlyPDF } from "../../utils/reports/monthlyReport";
 import { formatDate, rupiah } from "../../utils/reports/pdfHelper";
 
+//211973883093135@lid mama
+//264668920737929@lid henry
+//120363411427876906@g.us grup isi pulsa
+//113357172563989@lid center family pulsa
+
 export const wahaWebhook =
   async (req: any, res: any) => {
 
@@ -34,9 +39,28 @@ export const wahaWebhook =
         body?.payload?.from;
 
       if (!message) {
-
         return res.sendStatus(200);
+      }
 
+      const centerFamily = "113357172563989@lid";
+      const grupIsiPulsa = "120363411427876906@g.us";
+      const kode = "368247";
+
+      if(from == grupIsiPulsa) {
+        if (message.endsWith(`.${kode}`)) {
+          
+          await sendWhatsappMessage(
+            centerFamily,
+            message
+          );
+        }
+      }
+
+      if(from == centerFamily) {
+        await sendWhatsappMessage(
+          grupIsiPulsa,
+          message
+        );
       }
 
       const command = parseCommand(message);
@@ -170,7 +194,7 @@ export const wahaWebhook =
 
       if(command.command === "LIST") {
         const page = Number(command.page) || 1;
-        const limit = 10;
+        const limit = 20;
 
         const orders = await getOrderList(page, limit);
 

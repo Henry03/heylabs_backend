@@ -12,6 +12,8 @@ import { generateMonthlyData } from "./report.service";
 const WA_GROUP =
     "120363423177827833@g.us";
 
+const grupBelanjaOnline = "120363411169151632@g.us";
+
 cron.schedule(
     "5 0 1 * *",
 
@@ -135,7 +137,7 @@ ${rupiah(report.closingBalance)}
 📎 Laporan PDF terlampir.`;
 
     await sendWhatsappDocument(
-        WA_GROUP,
+        grupBelanjaOnline,
         pdf,
 
         `${caption}`
