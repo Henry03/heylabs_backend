@@ -2,7 +2,8 @@
   "scripts": {
     "dev": "nodemon --watch src --ext ts --exec tsx src/server.ts",
     "build": "tsc",
-    "start": "tsx src/server.ts"
+    "start": "tsx src/server.ts",
+    "start:telegram": "tsx src/services/telegram.service.ts"
   },
   "keywords": [],
   "author": "",
@@ -28,6 +29,7 @@
     "express": "^5.1.0",
     "express-validator": "^7.2.1",
     "gm": "^1.25.1",
+    "input": "^1.0.1",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",
     "node-cron": "^4.2.1",
@@ -37,6 +39,7 @@
     "pdfkit": "^0.19.1",
     "prisma": "^6.19.2",
     "sharp": "^0.34.4",
+    "telegram": "^2.26.22",
     "tesseract.js": "^6.0.1",
     "tsx": "^4.20.6",
     "winston": "^3.18.3"
@@ -44,7 +47,7 @@
   "devDependencies": {
     "@types/express": "^5.0.3",
     "@types/multer": "^2.0.0",
-    "@types/node": "^24.7.0",
+    "@types/node": "^24.13.3",
     "@types/pdfkit": "^0.17.6",
     "@types/winston": "^2.4.4",
     "ts-node": "^10.9.2",
