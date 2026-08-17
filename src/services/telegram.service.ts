@@ -11,6 +11,7 @@ const apiId = Number(process.env.TELEGRAM_API_ID);
 const apiHash = process.env.TELEGRAM_API_HASH || '';
 const stringSession = new StringSession(process.env.TELEGRAM_SESSION_STRING || '');
 const keywords = ["deposit", "komisi", "transfer"];
+const ALLOWED_SENDER_IDS = ["1562376617", "5613877073"];
 const grupIsiPulsa = "120363411427876906@g.us";
 
 // Native readline prompt helper
@@ -64,8 +65,9 @@ export const startTelegramClient = async () => {
   // Handle incoming messages
   client.addEventHandler(async (event) => {
     const message = event.message;
-    if (message && !message.out && keywords.some(keyword => message.text?.toLowerCase().includes(keyword))) {
-        console.log(`[Personal Account] ${message.senderId}: ${message.text}`);
+    const senderId = message?.senderId?.toString() || '';
+    if (message && !message.out && ALLOWED_SENDER_IDS.includes(senderId) && keywords.some(keyword => message.text?.toLowerCase().includes(keyword))) {
+        console.log(`[Personal Account] ${senderId}: ${message.text}`);
         await sendWhatsappMessage(
             grupIsiPulsa,
             message.text || ''
